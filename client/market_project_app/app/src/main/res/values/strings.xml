@@ -1,3 +1,5 @@
 <resources>
     <string name="app_name">MarketProject</string>
+
+    <string name="zhucexieyi"><u>Register</u></string>
 </resources>
