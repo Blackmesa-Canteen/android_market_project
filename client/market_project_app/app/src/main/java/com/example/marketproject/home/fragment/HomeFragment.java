@@ -4,24 +4,21 @@ import android.view.Gravity;
 import android.view.View;
 import android.widget.TextView;
 
+import com.example.marketproject.R;
 import com.example.marketproject.base.BaseFragment;
 
 public class HomeFragment extends BaseFragment {
 
-    private TextView textView;
-
     @Override
     public View initView() {
-        textView = new TextView(mContext);
-        textView.setGravity(Gravity.CENTER);
-        textView.setTextSize(25);
-        return textView;
+        View view = View.inflate(mContext, R.layout.fragment_home, null);
+        return view;
     }
 
     @Override
     public void initData() {
         super.initData();
 
-        textView.setText("home page");
+
     }
 }
