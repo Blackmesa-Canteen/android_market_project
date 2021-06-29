@@ -1,14 +1,14 @@
-package com.example.marketproject.app;
+package com.example.marketproject.utils;
 
 public class Constants {
 
     public static final String BASE = "http://10.0.2.2:8080";
 
     // 请求 Json 数据基本 URL
-    public static final String Base_URL_JSON = BASE + "/atguigu/json/";
+    public static final String Base_URL_JSON = BASE + "/json/";
 
     // 请求图片基本 URL
-    public static final String Base_URl_IMAGE = BASE + "/atguigu/img";
+    public static final String Base_URl_IMAGE = BASE + "/img";
 
     //主页路径
     public static final String HOME_URL = Base_URL_JSON + "HOME_URL.json";

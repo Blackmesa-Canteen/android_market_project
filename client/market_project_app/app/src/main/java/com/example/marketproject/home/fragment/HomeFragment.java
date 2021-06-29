@@ -1,6 +1,6 @@
 package com.example.marketproject.home.fragment;
 
-import android.view.Gravity;
+import android.util.Log;
 import android.view.View;
 import android.widget.ImageView;
 import android.widget.TextView;
@@ -8,12 +8,13 @@ import android.widget.Toast;
 
 import androidx.recyclerview.widget.RecyclerView;
 
+import com.alibaba.fastjson.JSON;
 import com.example.marketproject.R;
-import com.example.marketproject.app.Constants;
+import com.example.marketproject.home.bean.ResultBean;
+import com.example.marketproject.utils.Constants;
 import com.example.marketproject.app.HttpClient;
 import com.example.marketproject.app.MyStringCallBack;
 import com.example.marketproject.base.BaseFragment;
-import com.example.marketproject.databinding.ActivityMainBinding;
 
 import org.jetbrains.annotations.NotNull;
 
@@ -33,6 +34,7 @@ public class HomeFragment extends BaseFragment {
     private ImageView ib_top;
     private TextView tv_search_home;
     private TextView tv_message_home;
+    private ResultBean.ResultDTO result;
 
     @Override
     public View initView() {
@@ -74,8 +76,15 @@ public class HomeFragment extends BaseFragment {
     @Override
     public void initData() {
         super.initData();
+
+        // get data from server
+        getDataFromNetwork();
+    }
+
+    private void getDataFromNetwork() {
         String url = "http：//10.0.2.2:8080";
         OkHttpClient okHttpClient = HttpClient.getInstance().getOkHttpClient();
+        MyStringCallBack myStringCallBack = new MyStringCallBack();
 
         Request request = new Request.Builder()
                 .url(Constants.HOME_URL)
@@ -83,6 +92,36 @@ public class HomeFragment extends BaseFragment {
 
         okHttpClient
         .newCall(request)
-        .enqueue(new MyStringCallBack());
+        .enqueue(new Callback() {
+            @Override
+            public void onFailure(@NotNull Call call, @NotNull IOException e) {
+                Log.e("Network-ERROR", "联网失败: " + e.getMessage());
+
+            }
+
+            @Override
+            public void onResponse(@NotNull Call call, @NotNull Response response) throws IOException {
+                if (response != null) {
+                    Log.d("OK", "请求成功。");
+                    processData(response.body().string());
+                }
+            }
+        });
+    }
+
+    private void processData(String json) {
+        // using fastjson from Alibaba
+        ResultBean resultBean = JSON.parseObject(json, ResultBean.class);
+        result = resultBean.getResult();
+        if(result != null) {
+            Log.d("OK", "成功解析: " + result.getHotInfo().get(0).getName());
+            /* set up an adapter */
+
+        }
+        else
+        {
+
+        }
+
     }
 }
