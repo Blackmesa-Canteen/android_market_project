@@ -8,7 +8,7 @@ public class Constants {
     public static final String Base_URL_JSON = BASE + "/json/";
 
     // 请求图片基本 URL
-    public static final String Base_URl_IMAGE = BASE + "/img";
+    public static final String Base_URL_IMAGE = BASE + "/img";
 
     //主页路径
     public static final String HOME_URL = Base_URL_JSON + "HOME_URL.json";

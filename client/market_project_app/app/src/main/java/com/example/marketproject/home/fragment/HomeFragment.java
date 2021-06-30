@@ -1,20 +1,27 @@
 package com.example.marketproject.home.fragment;
 
+import android.app.Activity;
 import android.util.Log;
 import android.view.View;
+import android.view.ViewGroup;
 import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import androidx.annotation.NonNull;
+import androidx.recyclerview.widget.GridLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.alibaba.fastjson.JSON;
 import com.example.marketproject.R;
+import com.example.marketproject.home.adapter.HomeFragmentAdapter;
 import com.example.marketproject.home.bean.ResultBean;
 import com.example.marketproject.utils.Constants;
 import com.example.marketproject.app.HttpClient;
 import com.example.marketproject.app.MyStringCallBack;
 import com.example.marketproject.base.BaseFragment;
+import com.zhy.http.okhttp.OkHttpUtils;
+import com.zhy.http.okhttp.callback.StringCallback;
 
 import org.jetbrains.annotations.NotNull;
 
@@ -35,6 +42,8 @@ public class HomeFragment extends BaseFragment {
     private TextView tv_search_home;
     private TextView tv_message_home;
     private ResultBean.ResultDTO result;
+
+    private HomeFragmentAdapter adapter;
 
     @Override
     public View initView() {
@@ -82,46 +91,71 @@ public class HomeFragment extends BaseFragment {
     }
 
     private void getDataFromNetwork() {
-        String url = "http：//10.0.2.2:8080";
-        OkHttpClient okHttpClient = HttpClient.getInstance().getOkHttpClient();
-        MyStringCallBack myStringCallBack = new MyStringCallBack();
+        String url = Constants.HOME_URL;
+        OkHttpUtils
+                .get()
+                .url(url)
+                .build()
+                .execute(new StringCallback() {
+                    /**
+                     * 当请求失败的时候回调
+                     * @param call
+                     * @param e
+                     * @param id
+                     */
+                    @Override
+                    public void onError(Call call, Exception e, int id) {
 
-        Request request = new Request.Builder()
-                .url(Constants.HOME_URL)
-                .build();
+                        Log.e(TAG,"首页请求失败=="+e.getMessage());
+                    }
 
-        okHttpClient
-        .newCall(request)
-        .enqueue(new Callback() {
-            @Override
-            public void onFailure(@NotNull Call call, @NotNull IOException e) {
-                Log.e("Network-ERROR", "联网失败: " + e.getMessage());
+                    /**
+                     * 当联网成功的时候回调
+                     * @param response 请求成功的数据
+                     * @param id
+                     */
+                    @Override
+                    public void onResponse(String response, int id) {
+                        // Log.d(TAG,"首页请求成功=="+response);
+                        //解析数据
+                        processData(response);
+                    }
 
-            }
 
-            @Override
-            public void onResponse(@NotNull Call call, @NotNull Response response) throws IOException {
-                if (response != null) {
-                    Log.d("OK", "请求成功。");
-                    processData(response.body().string());
-                }
-            }
-        });
+                });
     }
 
     private void processData(String json) {
-        // using fastjson from Alibaba
-        ResultBean resultBean = JSON.parseObject(json, ResultBean.class);
-        result = resultBean.getResult();
-        if(result != null) {
-            Log.d("OK", "成功解析: " + result.getHotInfo().get(0).getName());
-            /* set up an adapter */
+        ResultBean resultBeanData = JSON.parseObject(json,ResultBean.class);
+        ResultBean.ResultDTO bean = resultBeanData.getResult();
+        if(bean != null){
+            //有数据
+            //设置适配器
+            adapter = new HomeFragmentAdapter(mContext,bean);
+            Log.d("OK", "适配器已经配置");
+            rvHome.setAdapter(adapter);
+            GridLayoutManager manager =  new GridLayoutManager(mContext,1);
+            //设置跨度大小监听
+            manager.setSpanSizeLookup(new GridLayoutManager.SpanSizeLookup() {
+                @Override
+                public int getSpanSize(int position) {
+                    if(position <= 3){
+                        //隐藏
+                        ib_top.setVisibility(View.GONE);
+                    }else{
+                        //显示
+                        ib_top.setVisibility(View.VISIBLE);
+                    }
+                    //只能返回1
+                    return 1;
+                }
+            });
+            //设置布局管理
+            rvHome.setLayoutManager(manager);
 
+        }else{
+            //没有数据
         }
-        else
-        {
-
-        }
-
+        Log.d(TAG,"解析成功=="+bean.getHotInfo().get(0).getName());
     }
 }
