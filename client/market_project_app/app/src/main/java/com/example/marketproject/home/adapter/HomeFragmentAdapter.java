@@ -13,6 +13,8 @@ import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
+import androidx.viewpager.widget.PagerAdapter;
+import androidx.viewpager.widget.ViewPager;
 
 import com.bumptech.glide.Glide;
 import com.example.marketproject.R;
@@ -73,13 +75,15 @@ public class HomeFragmentAdapter extends RecyclerView.Adapter {
     public RecyclerView.ViewHolder onCreateViewHolder(@NonNull @NotNull ViewGroup parent, int viewType) {
         if (viewType == BANNER) {
             return new BannerViewHolder(mContext, mLayoutInflater.inflate(R.layout.banner_viewpager, null));
-        } else if (viewType == CHANNEL) {
+        }
+        else if (viewType == CHANNEL) {
             return new ChannelViewHolder(mContext, mLayoutInflater.inflate(R.layout.channel_item, null));
         }
-//        else if (viewType == ACT)
-//        {
-//            return new ActViewHolder(mContext, mLayoutInflater.inflate(R.layout.act_item, null));
-//        }else if (viewType == SECKILL) {
+        else if (viewType == ACT)
+        {
+            return new ActViewHolder(mContext, mLayoutInflater.inflate(R.layout.act_item, null));
+        }
+//        else if (viewType == SECKILL) {
 //            return new SeckillViewHolder(mContext, mLayoutInflater.inflate(R.layout.seckill_item, null));
 //        }else if(viewType == RECOMMEND ){
 //            return new RecommendViewHolder(mContext, mLayoutInflater.inflate(R.layout.recommend_item, null));
@@ -103,10 +107,11 @@ public class HomeFragmentAdapter extends RecyclerView.Adapter {
             ChannelViewHolder channelViewHolder = (ChannelViewHolder) holder;
             channelViewHolder.setData(resultBean.getChannelInfo());
         }
-//        else if (getItemViewType(position) == ACT) {
-//            ActViewHolder actViewHolder = (ActViewHolder) holder;
-//            actViewHolder.setData(resultBean.getAct_info());
-//        }else if(getItemViewType(position) == SECKILL){
+        else if (getItemViewType(position) == ACT) {
+            ActViewHolder actViewHolder = (ActViewHolder) holder;
+            actViewHolder.setData(resultBean.getActInfo());
+        }
+//        else if(getItemViewType(position) == SECKILL){
 //            SeckillViewHolder seckillViewHolder = (SeckillViewHolder) holder;
 //            seckillViewHolder.setData(resultBean.getSeckill_info());
 //        }else if(getItemViewType(position) == RECOMMEND){
@@ -125,7 +130,7 @@ public class HomeFragmentAdapter extends RecyclerView.Adapter {
     @Override
     public int getItemCount() {
         // start from 1 -> 2 ... 6
-        return 2;
+        return 3;
     }
 
     @Override
@@ -217,12 +222,7 @@ public class HomeFragmentAdapter extends RecyclerView.Adapter {
             gvChannel = (GridView) itemView.findViewById(R.id.gv_channel);
 
             //设置item的点击事件
-            gvChannel.setOnItemClickListener(new AdapterView.OnItemClickListener() {
-                @Override
-                public void onItemClick(AdapterView parent, View view, int position, long id) {
-                    Toast.makeText(mContext, "position" + position, Toast.LENGTH_SHORT).show();
-                }
-            });
+            gvChannel.setOnItemClickListener((parent, view, position, id) -> Toast.makeText(mContext, "position" + position, Toast.LENGTH_SHORT).show());
 
         }
 
@@ -233,4 +233,63 @@ public class HomeFragmentAdapter extends RecyclerView.Adapter {
     }
 
 
+    class ActViewHolder extends RecyclerView.ViewHolder {
+        private final Context mContext;
+        private final ViewPager act_viewpager;
+
+        public ActViewHolder(Context mContext, View itemView) {
+            super(itemView);
+            this.mContext = mContext;
+            act_viewpager = (ViewPager) itemView.findViewById(R.id.act_viewpager);
+        }
+
+        public void setData(List<ResultBean.ResultDTO.ActInfoDTO> actInfo) {
+            act_viewpager.setPageMargin(20);
+            act_viewpager.setAdapter(new PagerAdapter() {
+                @Override
+                public int getCount() {
+                    return actInfo.size();
+                }
+
+                /**
+                 * 判断是不是一样的
+                 * @param view 页面
+                 * @param object instantiateItem()方法返回的值
+                 * @return
+                 */
+                @Override
+                public boolean isViewFromObject(@NonNull @NotNull View view, @NonNull @NotNull Object object) {
+                    return view == object;
+                }
+
+                /**
+                 *
+                 * @param container ViewPager
+                 * @param position 对应页面的位置
+                 * @return
+                 */
+                @NonNull
+                @NotNull
+                @Override
+                public Object instantiateItem(@NonNull @NotNull ViewGroup container, int position) {
+                    ImageView imageView = new ImageView(mContext);
+                    imageView.setScaleType(ImageView.ScaleType.FIT_XY);
+
+                    // 加载图片
+                    Glide.with(mContext).load(Constants.Base_URL_IMAGE + actInfo.get(position).getIconUrl()).into(imageView);
+                    // 添加到容器中
+                    container.addView(imageView);
+                    imageView.setOnClickListener(v -> Toast.makeText(mContext, "position == " + position, Toast.LENGTH_SHORT).show());
+                    return imageView;
+                }
+
+                @Override
+                public void destroyItem(@NonNull @NotNull ViewGroup container, int position, @NonNull @NotNull Object object) {
+                    container.removeView((View) object);
+                }
+            });
+
+
+        }
+    }
 }
