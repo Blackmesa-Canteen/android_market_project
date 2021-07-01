@@ -2,7 +2,9 @@ package com.example.marketproject.utils;
 
 public class Constants {
 
-    public static final String BASE = "http://10.0.2.2:8080";
+    // https://android-market-demo.herokuapp.com/
+    // http://10.0.2.2:8080
+    public static final String BASE = "https://android-market-demo.herokuapp.com/";
 
     // 请求 Json 数据基本 URL
     public static final String Base_URL_JSON = BASE + "/json/";
