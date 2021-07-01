@@ -14,6 +14,7 @@ public class Welcome extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.welcome);
+        getSupportActionBar().hide();
 
         // two seconds, then enter main layout
         new Handler().postDelayed(new Runnable() {

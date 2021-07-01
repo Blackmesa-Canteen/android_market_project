@@ -5,7 +5,10 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.AdapterView;
+import android.widget.GridView;
 import android.widget.ImageView;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import androidx.annotation.NonNull;
@@ -70,9 +73,11 @@ public class HomeFragmentAdapter extends RecyclerView.Adapter {
     public RecyclerView.ViewHolder onCreateViewHolder(@NonNull @NotNull ViewGroup parent, int viewType) {
         if (viewType == BANNER) {
             return new BannerViewHolder(mContext, mLayoutInflater.inflate(R.layout.banner_viewpager, null));
-        } //else if (viewType == CHANNEL) {
-//            return new ChannelViewHolder(mContext, mLayoutInflater.inflate(R.layout.channel_item, null));
-//        } else if (viewType == ACT) {
+        } else if (viewType == CHANNEL) {
+            return new ChannelViewHolder(mContext, mLayoutInflater.inflate(R.layout.channel_item, null));
+        }
+//        else if (viewType == ACT)
+//        {
 //            return new ActViewHolder(mContext, mLayoutInflater.inflate(R.layout.act_item, null));
 //        }else if (viewType == SECKILL) {
 //            return new SeckillViewHolder(mContext, mLayoutInflater.inflate(R.layout.seckill_item, null));
@@ -91,10 +96,26 @@ public class HomeFragmentAdapter extends RecyclerView.Adapter {
      */
     @Override
     public void onBindViewHolder(@NonNull @NotNull RecyclerView.ViewHolder holder, int position) {
-        if(getItemViewType(position) == BANNER) {
+        if (getItemViewType(position) == BANNER) {
             BannerViewHolder bannerViewHolder = (BannerViewHolder) holder;
             bannerViewHolder.setData(resultBean.getBannerInfo());
+        } else if (getItemViewType(position) == CHANNEL) {
+            ChannelViewHolder channelViewHolder = (ChannelViewHolder) holder;
+            channelViewHolder.setData(resultBean.getChannelInfo());
         }
+//        else if (getItemViewType(position) == ACT) {
+//            ActViewHolder actViewHolder = (ActViewHolder) holder;
+//            actViewHolder.setData(resultBean.getAct_info());
+//        }else if(getItemViewType(position) == SECKILL){
+//            SeckillViewHolder seckillViewHolder = (SeckillViewHolder) holder;
+//            seckillViewHolder.setData(resultBean.getSeckill_info());
+//        }else if(getItemViewType(position) == RECOMMEND){
+//            RecommendViewHolder recommendViewHolder = (RecommendViewHolder) holder;
+//            recommendViewHolder.setData(resultBean.getRecommend_info());
+//        }else if(getItemViewType(position)==HOT){
+//            HotViewHolder hotViewHolder = (HotViewHolder) holder;
+//            hotViewHolder.setData(resultBean.getHot_info());
+//        }
     }
 
     /**
@@ -104,7 +125,7 @@ public class HomeFragmentAdapter extends RecyclerView.Adapter {
     @Override
     public int getItemCount() {
         // start from 1 -> 2 ... 6
-        return 1;
+        return 2;
     }
 
     @Override
@@ -178,14 +199,38 @@ public class HomeFragmentAdapter extends RecyclerView.Adapter {
             });
 
             //设置item的点击事件
-            banner.setOnBannerClickListener(new OnBannerClickListener() {
+            banner.setOnBannerClickListener(position -> Toast.makeText(mContext, "position==" + position, Toast.LENGTH_SHORT).show());
+        }
+    }
+
+    class ChannelViewHolder extends RecyclerView.ViewHolder {
+
+        private Context mContext;
+        private GridView gvChannel;
+
+        // GrkdView 适配器
+        private ChannelAdapter adapter;
+
+        public ChannelViewHolder(Context mContext, @NonNull @NotNull View itemView) {
+            super(itemView);
+            this.mContext = mContext;
+            gvChannel = (GridView) itemView.findViewById(R.id.gv_channel);
+
+            //设置item的点击事件
+            gvChannel.setOnItemClickListener(new AdapterView.OnItemClickListener() {
                 @Override
-                public void OnBannerClick(int position) {
-                    Toast.makeText(mContext, "position==" + position, Toast.LENGTH_SHORT).show();
-//                    startGoodsInfoActivity(goodsBean);
+                public void onItemClick(AdapterView parent, View view, int position, long id) {
+                    Toast.makeText(mContext, "position" + position, Toast.LENGTH_SHORT).show();
                 }
             });
+
         }
 
+        public void setData(List<ResultBean.ResultDTO.ChannelInfoDTO> channelInfo) {
+            adapter = new ChannelAdapter(mContext, channelInfo);
+            gvChannel.setAdapter(adapter);
+        }
     }
+
+
 }
