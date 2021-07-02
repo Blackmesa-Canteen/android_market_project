@@ -1,6 +1,8 @@
 package com.example.marketproject.home.adapter;
 
 import android.content.Context;
+import android.os.Handler;
+import android.os.Message;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -12,6 +14,7 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import androidx.annotation.NonNull;
+import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 import androidx.viewpager.widget.PagerAdapter;
 import androidx.viewpager.widget.ViewPager;
@@ -27,9 +30,14 @@ import com.youth.banner.Transformer;
 import com.youth.banner.listener.OnLoadImageListener;
 
 import org.jetbrains.annotations.NotNull;
+import org.w3c.dom.Text;
 
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
+import java.util.logging.LogRecord;
+import java.util.logging.SimpleFormatter;
 
 public class HomeFragmentAdapter extends RecyclerView.Adapter {
 
@@ -83,9 +91,10 @@ public class HomeFragmentAdapter extends RecyclerView.Adapter {
         {
             return new ActViewHolder(mContext, mLayoutInflater.inflate(R.layout.act_item, null));
         }
-//        else if (viewType == SECKILL) {
-//            return new SeckillViewHolder(mContext, mLayoutInflater.inflate(R.layout.seckill_item, null));
-//        }else if(viewType == RECOMMEND ){
+        else if (viewType == SECKILL) {
+            return new SeckillViewHolder(mContext, mLayoutInflater.inflate(R.layout.seckill_item, null));
+        }
+//        else if(viewType == RECOMMEND ){
 //            return new RecommendViewHolder(mContext, mLayoutInflater.inflate(R.layout.recommend_item, null));
 //        }else if(viewType == HOT){
 //            return new HotViewHolder(mContext, mLayoutInflater.inflate(R.layout.hot_item, null));
@@ -111,10 +120,11 @@ public class HomeFragmentAdapter extends RecyclerView.Adapter {
             ActViewHolder actViewHolder = (ActViewHolder) holder;
             actViewHolder.setData(resultBean.getActInfo());
         }
-//        else if(getItemViewType(position) == SECKILL){
-//            SeckillViewHolder seckillViewHolder = (SeckillViewHolder) holder;
-//            seckillViewHolder.setData(resultBean.getSeckill_info());
-//        }else if(getItemViewType(position) == RECOMMEND){
+        else if(getItemViewType(position) == SECKILL){
+            SeckillViewHolder seckillViewHolder = (SeckillViewHolder) holder;
+            seckillViewHolder.setData(resultBean.getSeckillInfo());
+        }
+//        else if(getItemViewType(position) == RECOMMEND){
 //            RecommendViewHolder recommendViewHolder = (RecommendViewHolder) holder;
 //            recommendViewHolder.setData(resultBean.getRecommend_info());
 //        }else if(getItemViewType(position)==HOT){
@@ -130,7 +140,7 @@ public class HomeFragmentAdapter extends RecyclerView.Adapter {
     @Override
     public int getItemCount() {
         // start from 1 -> 2 ... 6
-        return 3;
+        return 4;
     }
 
     @Override
@@ -292,4 +302,66 @@ public class HomeFragmentAdapter extends RecyclerView.Adapter {
 
         }
     }
+
+    /**
+     * 相差多少毫秒
+     */
+    private long dt = 0;
+    class SeckillViewHolder extends RecyclerView.ViewHolder {
+        private final Context mContext;
+        private TextView tv_time_seckill;
+        private TextView tv_more_seckill;
+        private RecyclerView rv_seckill;
+        private SecKillRecyclerViewAdapter adapter;
+
+        public SeckillViewHolder(Context mContext, View viewItem) {
+            super(viewItem);
+            this.mContext = mContext;
+            tv_time_seckill = (TextView) viewItem.findViewById(R.id.tv_time_seckill);
+            tv_more_seckill = (TextView) viewItem.findViewById(R.id.tv_more_seckill);
+            rv_seckill = (RecyclerView) viewItem.findViewById(R.id.rv_seckill);
+            
+        }
+
+        public void setData(ResultBean.ResultDTO.SeckillInfoDTO seckillInfo) {
+            // 得到数据，设置数据（文本+recycleView的数据）
+            adapter = new SecKillRecyclerViewAdapter(mContext, seckillInfo.getList());
+            rv_seckill.setAdapter(adapter);
+            // recycleView 设置布局管理器
+            rv_seckill.setLayoutManager(new LinearLayoutManager(mContext, LinearLayoutManager.HORIZONTAL, false));
+            adapter.setOnSeckillRecyclerView(new SecKillRecyclerViewAdapter.OnSeckillRecyclerView() {
+                @Override
+                public void onItemClick(int position) {
+                    Toast.makeText(mContext, "秒杀: " + position, Toast.LENGTH_SHORT).show();
+                }
+            });
+
+            // 秒杀的倒计时
+            dt = Long.parseLong(seckillInfo.getEndTime()) - Long.parseLong(seckillInfo.getStartTime());
+            SimpleDateFormat format = new SimpleDateFormat("HH:mm:ss");
+            tv_time_seckill.setText(format.format(new Date(dt)));
+
+            handler.sendEmptyMessageDelayed(0, 1000);
+        }
+
+        private final Handler handler = new Handler(new Handler.Callback() {
+            @Override
+            public boolean handleMessage(@NonNull Message msg) {
+                dt = dt - 1000;
+                SimpleDateFormat formatter = new SimpleDateFormat("HH:mm:ss");
+                String time = formatter.format(new Date(dt));
+                tv_time_seckill.setText(time);
+
+                handler.removeMessages(0);
+                handler.sendEmptyMessageDelayed(0,1000);
+                if(dt <=0){
+                    //把消息移除
+                    handler.removeCallbacksAndMessages(null);
+                }
+
+                return true;
+            }
+        });
+    }
+
 }
