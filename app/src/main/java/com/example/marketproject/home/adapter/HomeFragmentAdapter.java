@@ -335,6 +335,7 @@ public class HomeFragmentAdapter extends RecyclerView.Adapter {
                     Toast.makeText(mContext, "秒杀: " + position, Toast.LENGTH_SHORT).show();
                 }
             });
+            
 
             // 秒杀的倒计时
             dt = Long.parseLong(seckillInfo.getEndTime()) - Long.parseLong(seckillInfo.getStartTime());
