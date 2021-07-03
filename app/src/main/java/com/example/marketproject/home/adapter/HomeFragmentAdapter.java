@@ -94,9 +94,10 @@ public class HomeFragmentAdapter extends RecyclerView.Adapter {
         else if (viewType == SECKILL) {
             return new SeckillViewHolder(mContext, mLayoutInflater.inflate(R.layout.seckill_item, null));
         }
-//        else if(viewType == RECOMMEND ){
-//            return new RecommendViewHolder(mContext, mLayoutInflater.inflate(R.layout.recommend_item, null));
-//        }else if(viewType == HOT){
+        else if(viewType == RECOMMEND ){
+            return new RecommendViewHolder(mContext, mLayoutInflater.inflate(R.layout.recommend_item, null));
+        }
+//        else if(viewType == HOT){
 //            return new HotViewHolder(mContext, mLayoutInflater.inflate(R.layout.hot_item, null));
 //        }
         return null;
@@ -124,10 +125,11 @@ public class HomeFragmentAdapter extends RecyclerView.Adapter {
             SeckillViewHolder seckillViewHolder = (SeckillViewHolder) holder;
             seckillViewHolder.setData(resultBean.getSeckillInfo());
         }
-//        else if(getItemViewType(position) == RECOMMEND){
-//            RecommendViewHolder recommendViewHolder = (RecommendViewHolder) holder;
-//            recommendViewHolder.setData(resultBean.getRecommend_info());
-//        }else if(getItemViewType(position)==HOT){
+        else if(getItemViewType(position) == RECOMMEND){
+            RecommendViewHolder recommendViewHolder = (RecommendViewHolder) holder;
+            recommendViewHolder.setData(resultBean.getRecommendInfo());
+        }
+//        else if(getItemViewType(position)==HOT){
 //            HotViewHolder hotViewHolder = (HotViewHolder) holder;
 //            hotViewHolder.setData(resultBean.getHot_info());
 //        }
@@ -140,7 +142,7 @@ public class HomeFragmentAdapter extends RecyclerView.Adapter {
     @Override
     public int getItemCount() {
         // start from 1 -> 2 ... 6
-        return 4;
+        return 5;
     }
 
     @Override
@@ -365,4 +367,31 @@ public class HomeFragmentAdapter extends RecyclerView.Adapter {
         });
     }
 
+    class RecommendViewHolder extends RecyclerView.ViewHolder {
+        private final Context mContext;
+        private TextView tv_more_recommend;
+        private GridView gv_recommend;
+        private RecommendGridViewAdapter adapter;
+
+        public RecommendViewHolder(Context mContext, View viewItem) {
+            super(viewItem);
+            this.mContext = mContext;
+
+            tv_more_recommend = (TextView) viewItem.findViewById(R.id.tv_more_recommend);
+            gv_recommend = (GridView) viewItem.findViewById(R.id.gv_recommend);
+        }
+
+
+        public void setData(List<ResultBean.ResultDTO.RecommendInfoDTO> recommendInfo) {
+            adapter = new RecommendGridViewAdapter(mContext, recommendInfo);
+            gv_recommend.setAdapter(adapter);
+
+            gv_recommend.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+                @Override
+                public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
+                    Toast.makeText(mContext, "position: " + position, Toast.LENGTH_SHORT).show();
+                }
+            });
+        }
+    }
 }
