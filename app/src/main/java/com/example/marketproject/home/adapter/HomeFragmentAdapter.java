@@ -97,9 +97,9 @@ public class HomeFragmentAdapter extends RecyclerView.Adapter {
         else if(viewType == RECOMMEND ){
             return new RecommendViewHolder(mContext, mLayoutInflater.inflate(R.layout.recommend_item, null));
         }
-//        else if(viewType == HOT){
-//            return new HotViewHolder(mContext, mLayoutInflater.inflate(R.layout.hot_item, null));
-//        }
+        else if(viewType == HOT){
+            return new HotViewHolder(mContext, mLayoutInflater.inflate(R.layout.hot_item, null));
+        }
         return null;
     }
 
@@ -129,10 +129,10 @@ public class HomeFragmentAdapter extends RecyclerView.Adapter {
             RecommendViewHolder recommendViewHolder = (RecommendViewHolder) holder;
             recommendViewHolder.setData(resultBean.getRecommendInfo());
         }
-//        else if(getItemViewType(position)==HOT){
-//            HotViewHolder hotViewHolder = (HotViewHolder) holder;
-//            hotViewHolder.setData(resultBean.getHot_info());
-//        }
+        else if(getItemViewType(position)==HOT){
+            HotViewHolder hotViewHolder = (HotViewHolder) holder;
+            hotViewHolder.setData(resultBean.getHotInfo());
+        }
     }
 
     /**
@@ -142,7 +142,7 @@ public class HomeFragmentAdapter extends RecyclerView.Adapter {
     @Override
     public int getItemCount() {
         // start from 1 -> 2 ... 6
-        return 5;
+        return 6;
     }
 
     @Override
@@ -392,6 +392,32 @@ public class HomeFragmentAdapter extends RecyclerView.Adapter {
                     Toast.makeText(mContext, "position: " + position, Toast.LENGTH_SHORT).show();
                 }
             });
+        }
+    }
+
+    class HotViewHolder extends RecyclerView.ViewHolder {
+        private Context mContext;
+        private final TextView tv_more_hot;
+        private final GridView gv_hot;
+        private HotGridViewAdapter adapter;
+        public HotViewHolder(Context mContext, View itemView) {
+            super(itemView);
+            this.mContext = mContext;
+            tv_more_hot = (TextView) itemView.findViewById(R.id.tv_more_hot);
+            gv_hot = (GridView) itemView.findViewById(R.id.gv_hot);
+        }
+
+        public void setData(List<ResultBean.ResultDTO.HotInfoDTO> hotInfo) {
+            adapter = new HotGridViewAdapter(mContext, hotInfo);
+            gv_hot.setAdapter(adapter);
+
+            gv_hot.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+                @Override
+                public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
+                    Toast.makeText(mContext, "position: " + position, Toast.LENGTH_SHORT).show();
+                }
+            });
+
         }
     }
 }
