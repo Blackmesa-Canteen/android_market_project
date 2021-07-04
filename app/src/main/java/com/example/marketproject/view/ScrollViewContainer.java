@@ -1,18 +1,17 @@
-package com.jingchen.tbviewer;
-
-import java.util.Timer;
-import java.util.TimerTask;
+package com.example.marketproject.view;
 
 import android.content.Context;
 import android.os.Handler;
 import android.os.Message;
 import android.util.AttributeSet;
-import android.util.Log;
 import android.view.MotionEvent;
 import android.view.VelocityTracker;
 import android.view.View;
 import android.widget.RelativeLayout;
 import android.widget.ScrollView;
+
+import java.util.Timer;
+import java.util.TimerTask;
 
 /**
  * 包含两个ScrollView的容器
