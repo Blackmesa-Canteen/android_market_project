@@ -135,7 +135,7 @@ public class HomeFragment extends BaseFragment {
             Log.d("OK", "适配器已经配置");
             rvHome.setAdapter(adapter);
             GridLayoutManager manager =  new GridLayoutManager(mContext,1);
-            //设置跨度大小监听
+            //设置跨度大小监听， GridLayout能设置跨度大小的监听器
             manager.setSpanSizeLookup(new GridLayoutManager.SpanSizeLookup() {
                 @Override
                 public int getSpanSize(int position) {
@@ -150,6 +150,7 @@ public class HomeFragment extends BaseFragment {
                     return 1;
                 }
             });
+
             //设置布局管理
             rvHome.setLayoutManager(manager);
 

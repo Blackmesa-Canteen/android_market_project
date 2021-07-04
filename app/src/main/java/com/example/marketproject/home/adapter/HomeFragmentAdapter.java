@@ -1,9 +1,9 @@
 package com.example.marketproject.home.adapter;
 
 import android.content.Context;
+import android.content.Intent;
 import android.os.Handler;
 import android.os.Message;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -21,6 +21,7 @@ import androidx.viewpager.widget.ViewPager;
 
 import com.bumptech.glide.Glide;
 import com.example.marketproject.R;
+import com.example.marketproject.app.GoodsInfoActivity;
 import com.example.marketproject.home.bean.ResultBean;
 import com.example.marketproject.utils.Constants;
 import com.youth.banner.Banner;
@@ -30,14 +31,11 @@ import com.youth.banner.Transformer;
 import com.youth.banner.listener.OnLoadImageListener;
 
 import org.jetbrains.annotations.NotNull;
-import org.w3c.dom.Text;
 
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
-import java.util.logging.LogRecord;
-import java.util.logging.SimpleFormatter;
 
 public class HomeFragmentAdapter extends RecyclerView.Adapter {
 
@@ -71,6 +69,15 @@ public class HomeFragmentAdapter extends RecyclerView.Adapter {
         this.resultBean = resultBean;
         mLayoutInflater = LayoutInflater.from(mContext);
     }
+
+    /**
+     * 启动商品详情页
+     */
+    private void startGoodsInfoActivity() {
+        Intent intent = new Intent(mContext, GoodsInfoActivity.class);
+        mContext.startActivity(intent);
+    }
+
     /**
      * 相当于getView
      * @param parent
@@ -216,7 +223,13 @@ public class HomeFragmentAdapter extends RecyclerView.Adapter {
             });
 
             //设置item的点击事件
-            banner.setOnBannerClickListener(position -> Toast.makeText(mContext, "position==" + position, Toast.LENGTH_SHORT).show());
+            banner.setOnBannerClickListener(new OnBannerClickListener() {
+                @Override
+                public void OnBannerClick(int position) {
+                    Toast.makeText(mContext, "position==" + position, Toast.LENGTH_SHORT).show();
+                    startGoodsInfoActivity();
+                }
+            });
         }
     }
 
@@ -335,6 +348,7 @@ public class HomeFragmentAdapter extends RecyclerView.Adapter {
                 @Override
                 public void onItemClick(int position) {
                     Toast.makeText(mContext, "秒杀: " + position, Toast.LENGTH_SHORT).show();
+                    startGoodsInfoActivity();
                 }
             });
             
@@ -390,6 +404,7 @@ public class HomeFragmentAdapter extends RecyclerView.Adapter {
                 @Override
                 public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
                     Toast.makeText(mContext, "position: " + position, Toast.LENGTH_SHORT).show();
+                    startGoodsInfoActivity();
                 }
             });
         }
@@ -415,6 +430,7 @@ public class HomeFragmentAdapter extends RecyclerView.Adapter {
                 @Override
                 public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
                     Toast.makeText(mContext, "position: " + position, Toast.LENGTH_SHORT).show();
+                    startGoodsInfoActivity();
                 }
             });
 
