@@ -7,6 +7,7 @@ import androidx.fragment.app.FragmentTransaction;
 
 import android.os.Bundle;
 import android.view.View;
+import android.widget.LinearLayout;
 import android.widget.RadioGroup;
 
 import com.example.marketproject.R;
@@ -32,6 +33,7 @@ public class MainActivity extends FragmentActivity {
 
     /** 上次显示的fragment */
     private Fragment tempFragment;
+    private LinearLayout loadLayout;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -39,6 +41,7 @@ public class MainActivity extends FragmentActivity {
         binding = ActivityMainBinding.inflate(getLayoutInflater());
         View view = binding.getRoot();
         setContentView(view);
+        loadLayout = (LinearLayout) findViewById(R.id.loading_layout);
 
         /* select the button */
         /* I don't want to use findViewById anymore, because: ButterKnife
@@ -117,15 +120,19 @@ public class MainActivity extends FragmentActivity {
                 if (!nextFragment.isAdded()) {
                     //隐藏当前 Fragment
                     if (fromFragment != null) {
+                        loadLayout.setVisibility(View.VISIBLE);
                         transaction.hide(fromFragment);
                     }
                     transaction.add(R.id.frameLayout, nextFragment).commit();
+
                 } else {
                     //隐藏当前 Fragment
                     if (fromFragment != null) {
+                        loadLayout.setVisibility(View.VISIBLE);
                         transaction.hide(fromFragment);
                     }
                     transaction.show(nextFragment).commit();
+                    loadLayout.setVisibility(View.GONE);
                 }
             }
         }

@@ -1,10 +1,15 @@
 package com.example.marketproject.app;
 
+import androidx.annotation.RequiresApi;
 import androidx.appcompat.app.AppCompatActivity;
 
+import android.os.Build;
 import android.os.Bundle;
 import android.view.View;
+import android.webkit.WebResourceRequest;
+import android.webkit.WebSettings;
 import android.webkit.WebView;
+import android.webkit.WebViewClient;
 import android.widget.Button;
 import android.widget.ImageButton;
 import android.widget.ImageView;
@@ -12,7 +17,10 @@ import android.widget.LinearLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.bumptech.glide.Glide;
 import com.example.marketproject.R;
+import com.example.marketproject.home.bean.GoodsBean;
+import com.example.marketproject.utils.Constants;
 
 public class GoodsInfoActivity extends AppCompatActivity implements View.OnClickListener {
 
@@ -34,6 +42,9 @@ public class GoodsInfoActivity extends AppCompatActivity implements View.OnClick
     private TextView tv_more_search;
     private TextView tv_more_home;
     private Button btn_more;
+
+    private static final String GOODS_BEAN = "goodsBean";
+    private GoodsBean goodsBean;
 
 
     /**
@@ -113,5 +124,58 @@ public class GoodsInfoActivity extends AppCompatActivity implements View.OnClick
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_goods_info);
         findViews();
+
+        // 接收数据
+        goodsBean = (GoodsBean) getIntent().getSerializableExtra(GOODS_BEAN);
+        if (goodsBean != null) {
+            setDataForViews(goodsBean);
+        }
+
+    }
+
+    /**
+     * 设置view的数据，基于homeactivity传入的extra
+     * @param goodsBean
+     */
+    private void setDataForViews(GoodsBean goodsBean) {
+        Glide.with(this).load(Constants.Base_URL_IMAGE + goodsBean.getFigure()).into(ivGoodInfoImage);
+        tvGoodInfoName.setText(goodsBean.getName());
+        tvGoodInfoPrice.setText("¥" + goodsBean.getCover_price());
+
+        setWebViewData(goodsBean.getProduct_id());
+    }
+
+    private void setWebViewData(String product_id) {
+        if (product_id != null) {
+            wbGoodInfoMore.loadUrl("https://www.bing.com/");
+            // 设置
+            WebSettings settings = wbGoodInfoMore.getSettings();
+            // 设置双击变大
+            settings.setUseWideViewPort(true);
+            // 允许javascript
+            settings.setJavaScriptEnabled(true);
+            // 优先使用缓存
+            settings.setCacheMode(WebSettings.LOAD_CACHE_ELSE_NETWORK);
+            wbGoodInfoMore.setWebViewClient(new WebViewClient() {
+
+                // 高版本
+                @RequiresApi(api = Build.VERSION_CODES.LOLLIPOP)
+                @Override
+                public boolean shouldOverrideUrlLoading(WebView view, WebResourceRequest request) {
+                    view.loadUrl(request.getUrl().toString());
+
+                    // 为true不会弹出外部浏览器
+                    return true;
+                }
+
+                // 低版本
+
+                @Override
+                public boolean shouldOverrideUrlLoading(WebView view, String url) {
+                    view.loadUrl(url);
+                    return true;
+                }
+            });
+        }
     }
 }

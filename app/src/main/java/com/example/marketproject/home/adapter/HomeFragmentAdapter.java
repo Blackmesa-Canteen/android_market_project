@@ -22,6 +22,7 @@ import androidx.viewpager.widget.ViewPager;
 import com.bumptech.glide.Glide;
 import com.example.marketproject.R;
 import com.example.marketproject.app.GoodsInfoActivity;
+import com.example.marketproject.home.bean.GoodsBean;
 import com.example.marketproject.home.bean.ResultBean;
 import com.example.marketproject.utils.Constants;
 import com.youth.banner.Banner;
@@ -52,6 +53,8 @@ public class HomeFragmentAdapter extends RecyclerView.Adapter {
     // 热卖
     public static final int HOT = 5;
 
+    private static final String GOODS_BEAN = "goodsBean";
+
     /**
      * 总共6种类型：人为定义的
      */
@@ -72,9 +75,11 @@ public class HomeFragmentAdapter extends RecyclerView.Adapter {
 
     /**
      * 启动商品详情页
+     * @param goodsBean
      */
-    private void startGoodsInfoActivity() {
+    private void startGoodsInfoActivity(GoodsBean goodsBean) {
         Intent intent = new Intent(mContext, GoodsInfoActivity.class);
+        intent.putExtra(GOODS_BEAN, goodsBean);
         mContext.startActivity(intent);
     }
 
@@ -227,7 +232,7 @@ public class HomeFragmentAdapter extends RecyclerView.Adapter {
                 @Override
                 public void OnBannerClick(int position) {
                     Toast.makeText(mContext, "position==" + position, Toast.LENGTH_SHORT).show();
-                    startGoodsInfoActivity();
+//                    startGoodsInfoActivity(goodsBean);
                 }
             });
         }
@@ -347,8 +352,15 @@ public class HomeFragmentAdapter extends RecyclerView.Adapter {
             adapter.setOnSeckillRecyclerView(new SecKillRecyclerViewAdapter.OnSeckillRecyclerView() {
                 @Override
                 public void onItemClick(int position) {
-                    Toast.makeText(mContext, "秒杀: " + position, Toast.LENGTH_SHORT).show();
-                    startGoodsInfoActivity();
+                    GoodsBean goodsBean = new GoodsBean();
+                    ResultBean.ResultDTO.SeckillInfoDTO.ListDTO listDTO = seckillInfo.getList().get(position);
+
+                    // 秒杀商品信息类
+                    goodsBean.setCover_price(listDTO.getCoverPrice());
+                    goodsBean.setFigure(listDTO.getFigure());
+                    goodsBean.setName(listDTO.getName());
+                    goodsBean.setProduct_id(listDTO.getProductId());
+                    startGoodsInfoActivity(goodsBean);
                 }
             });
             
@@ -403,8 +415,15 @@ public class HomeFragmentAdapter extends RecyclerView.Adapter {
             gv_recommend.setOnItemClickListener(new AdapterView.OnItemClickListener() {
                 @Override
                 public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
-                    Toast.makeText(mContext, "position: " + position, Toast.LENGTH_SHORT).show();
-                    startGoodsInfoActivity();
+                    GoodsBean goodsBean = new GoodsBean();
+                    ResultBean.ResultDTO.RecommendInfoDTO hotInfoDTO = recommendInfo.get(position);
+
+                    // 推荐商品信息类
+                    goodsBean.setCover_price(hotInfoDTO.getCoverPrice());
+                    goodsBean.setFigure(hotInfoDTO.getFigure());
+                    goodsBean.setName(hotInfoDTO.getName());
+                    goodsBean.setProduct_id(hotInfoDTO.getProductId());
+                    startGoodsInfoActivity(goodsBean);
                 }
             });
         }
@@ -420,6 +439,8 @@ public class HomeFragmentAdapter extends RecyclerView.Adapter {
             this.mContext = mContext;
             tv_more_hot = (TextView) itemView.findViewById(R.id.tv_more_hot);
             gv_hot = (GridView) itemView.findViewById(R.id.gv_hot);
+
+
         }
 
         public void setData(List<ResultBean.ResultDTO.HotInfoDTO> hotInfo) {
@@ -429,11 +450,17 @@ public class HomeFragmentAdapter extends RecyclerView.Adapter {
             gv_hot.setOnItemClickListener(new AdapterView.OnItemClickListener() {
                 @Override
                 public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
-                    Toast.makeText(mContext, "position: " + position, Toast.LENGTH_SHORT).show();
-                    startGoodsInfoActivity();
+                    GoodsBean goodsBean = new GoodsBean();
+                    ResultBean.ResultDTO.HotInfoDTO hotInfoDTO = hotInfo.get(position);
+
+                    // 热卖商品信息类
+                    goodsBean.setCover_price(hotInfoDTO.getCoverPrice());
+                    goodsBean.setFigure(hotInfoDTO.getFigure());
+                    goodsBean.setName(hotInfoDTO.getName());
+                    goodsBean.setProduct_id(hotInfoDTO.getProductId());
+                    startGoodsInfoActivity(goodsBean);
                 }
             });
-
         }
     }
 }
