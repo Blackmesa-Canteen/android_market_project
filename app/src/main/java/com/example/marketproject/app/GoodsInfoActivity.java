@@ -19,7 +19,9 @@ import android.widget.Toast;
 
 import com.bumptech.glide.Glide;
 import com.example.marketproject.R;
+import com.example.marketproject.cart.utils.CartStorage;
 import com.example.marketproject.home.bean.GoodsBean;
+import com.example.marketproject.utils.CacheUtils;
 import com.example.marketproject.utils.Constants;
 
 public class GoodsInfoActivity extends AppCompatActivity implements View.OnClickListener {
@@ -100,13 +102,15 @@ public class GoodsInfoActivity extends AppCompatActivity implements View.OnClick
             Toast.makeText(this, "more info", Toast.LENGTH_SHORT).show();
         } else if ( v == btnGoodInfoAddcart ) {
             // Handle clicks for btnGoodInfoAddcart
-            Toast.makeText(this, "Add to cart", Toast.LENGTH_SHORT).show();
+            CartStorage.getInstance().addData(goodsBean);
         } else if (v == tvGoodInfoCallcenter) {
             Toast.makeText(this, "客服", Toast.LENGTH_SHORT).show();
         } else if ( v == tvGoodInfoCollection) {
             Toast.makeText(this, "收藏", Toast.LENGTH_SHORT).show();
         } else if ( v == tvGoodInfoCart) {
-            Toast.makeText(this, "购物车", Toast.LENGTH_SHORT).show();
+
+
+
         } else if ( v == tv_more_share) {
             Toast.makeText(this, "more share", Toast.LENGTH_SHORT).show();
         } else if (v == tv_more_search) {
