@@ -18,5 +18,6 @@ public class GoodsBean implements Serializable {
     private String product_id;
     private int number = 1;
 
+    private boolean isSelected = true;
 
 }

@@ -102,6 +102,7 @@ public class GoodsInfoActivity extends AppCompatActivity implements View.OnClick
             Toast.makeText(this, "more info", Toast.LENGTH_SHORT).show();
         } else if ( v == btnGoodInfoAddcart ) {
             // Handle clicks for btnGoodInfoAddcart
+            Toast.makeText(this, "Add to cart", Toast.LENGTH_SHORT).show();
             CartStorage.getInstance().addData(goodsBean);
         } else if (v == tvGoodInfoCallcenter) {
             Toast.makeText(this, "客服", Toast.LENGTH_SHORT).show();

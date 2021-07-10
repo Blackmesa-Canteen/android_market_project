@@ -9,10 +9,12 @@ import android.widget.LinearLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.example.marketproject.R;
 import com.example.marketproject.base.BaseFragment;
+import com.example.marketproject.cart.adapter.CartAdapter;
 import com.example.marketproject.cart.utils.CartStorage;
 import com.example.marketproject.home.bean.GoodsBean;
 
@@ -34,6 +36,9 @@ public class CartFragment extends BaseFragment implements View.OnClickListener {
     private ImageView ivEmpty;
     private TextView tvEmptyCartTobuy;
 
+    private LinearLayout ll_empty_cart;
+    private CartAdapter cartAdapter;
+
     @Override
     public View initView() {
         View view = View.inflate(mContext, R.layout.fragment_cart, null);
@@ -50,10 +55,13 @@ public class CartFragment extends BaseFragment implements View.OnClickListener {
 
         ivEmpty = (ImageView)view.findViewById( R.id.iv_empty );
         tvEmptyCartTobuy = (TextView)view.findViewById( R.id.tv_empty_cart_tobuy );
+        ll_empty_cart = (LinearLayout) view.findViewById(R.id.ll_empty_layout);
 
         btnCheckOut.setOnClickListener( this );
         btnDelete.setOnClickListener( this );
         btnCollection.setOnClickListener( this );
+
+
         return view;
     }
 
@@ -74,10 +82,29 @@ public class CartFragment extends BaseFragment implements View.OnClickListener {
     @Override
     public void initData() {
         super.initData();
+        showData();
+        
+    }
 
-        List<GoodsBean> allData = CartStorage.getInstance().getAllData();
-        for (GoodsBean goodsBean : allData) {
-            Toast.makeText(mContext, "data got", Toast.LENGTH_SHORT).show();
-        }
+    /**
+     * 显示数据
+     */
+    private void showData() {
+        List<GoodsBean> goodsBeanList = CartStorage.getInstance().getAllData();
+            if (goodsBeanList != null && goodsBeanList.size() >0 ) {
+                // 设置适配器
+                // 有数据，把没有数据显示的布局英藏
+                ll_empty_cart.setVisibility(View.GONE);
+
+                cartAdapter = new CartAdapter(mContext, goodsBeanList, tvShopcartTotal, checkboxAll);
+                recyclerview.setAdapter(cartAdapter);
+
+                // 设置布局管理
+                recyclerview.setLayoutManager(new LinearLayoutManager(mContext, LinearLayoutManager.VERTICAL, false));
+
+            } else {
+                // 显示空数据布局
+                ll_empty_cart.setVisibility(View.VISIBLE);
+            }
     }
 }

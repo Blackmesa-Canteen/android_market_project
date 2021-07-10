@@ -48,21 +48,15 @@ public class CartStorage {
      * @return
      */
     public List<GoodsBean> getAllData() {
-        List<GoodsBean> goodsBeanList = new ArrayList<>();
-
-        // 从本地获取
+        List<GoodsBean> goodsBeanList  = new ArrayList<>();
+        //1.从本地获取
         String json = CacheUtils.getString(mContext, JSON_CART);
-
-        // 使用Gson转换成列表
-        if(TextUtils.isEmpty(json)) {
-            // 使用GSON把string转换为List
-            List<GoodsBean> res = new Gson().fromJson(json, new TypeToken<GoodsBean>(){}.getType());
-
-            if (res != null) {
-                goodsBeanList = res;
-            }
+        //2.使用Gson转换成列表
+        //判断不为空的时候执行
+        if(!TextUtils.isEmpty(json)){
+            //把String转换成List
+            goodsBeanList = new Gson().fromJson(json,new TypeToken<List<GoodsBean>>(){}.getType());
         }
-
         return goodsBeanList;
     }
 
