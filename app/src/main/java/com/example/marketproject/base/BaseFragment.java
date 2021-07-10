@@ -47,6 +47,11 @@ public abstract class BaseFragment extends Fragment {
         initData();
     }
 
+    @Override
+    public void onResume() {
+        super.onResume();
+    }
+
     /**
      * get data from network connection
      */

@@ -34,9 +34,14 @@ public class CartAdapter extends RecyclerView.Adapter<CartAdapter.ViewHolder> {
         this.mContext = mContext;
         this.tv_shopcart_total = tv_shopcart_total;
         this.checkbox_all = checkbox_all;
-        
+
+        // 一进来：
+        // 计算总价
         showTotalPrice();
+        // 设置点击监听器们
         setListener();
+        // 检验是不是全选，如果是，选中全选checkbox
+        checkSelectedAll();
     }
 
     private void setListener() {
@@ -50,10 +55,56 @@ public class CartAdapter extends RecyclerView.Adapter<CartAdapter.ViewHolder> {
                 goodsBean.setSelected(!goodsBean.isSelected());
                 // 刷新adapter, 可能会重新调用对应的onBindViewHolder 方法
                 notifyItemChanged(position);
+                // 康康是不是全选了
+                checkSelectedAll();
                 // 重新计算总价
                 showTotalPrice();
             }
         });
+
+        // 全选框点击事件
+        checkbox_all.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                // 得到状态
+                boolean isChecked = checkbox_all.isChecked();
+
+                // 根据状态设置全选和非全选
+                checkAll_none(isChecked);
+
+                // 计算总价格
+                showTotalPrice();
+            }
+        });
+    }
+
+    /**
+     * 设置全选或者非全选
+     * @param isChecked
+     */
+    private void checkAll_none(boolean isChecked) {
+        if (goodsBeanList != null && goodsBeanList.size() > 0) {
+            for(int i = 0; i < goodsBeanList.size(); i++) {
+                GoodsBean bean = goodsBeanList.get(i);
+                bean.setSelected(isChecked);
+                notifyItemChanged(i);
+            }
+        }
+    }
+
+    private void checkSelectedAll() {
+        if (goodsBeanList != null && goodsBeanList.size() > 0) {
+            for(GoodsBean bean: goodsBeanList) {
+                if(!bean.isSelected()) {
+                    // 并没有全选
+                    checkbox_all.setChecked(false);
+                    return;
+                }
+            }
+
+            // 如果已经全选了
+            checkbox_all.setChecked(true);
+        }
     }
 
     class ViewHolder extends RecyclerView.ViewHolder {
