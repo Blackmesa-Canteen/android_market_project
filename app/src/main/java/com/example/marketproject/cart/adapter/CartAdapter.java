@@ -107,6 +107,24 @@ public class CartAdapter extends RecyclerView.Adapter<CartAdapter.ViewHolder> {
         }
     }
 
+    public void deleteData() {
+        if(goodsBeanList != null && goodsBeanList.size() >0){
+            for (int i=0;i<goodsBeanList.size();i++){
+                //删除选中的
+                GoodsBean goodsBean = goodsBeanList.get(i);
+                if(goodsBean.isSelected()){
+                    //内存-把移除
+                    goodsBeanList.remove(goodsBean);
+                    //保持到本地
+                    CartStorage.getInstance().deleteData(goodsBean);
+                    //刷新
+                    notifyItemRemoved(i);
+                    i--;
+                }
+            }
+        }
+    }
+
     class ViewHolder extends RecyclerView.ViewHolder {
 
         private CheckBox cb_gov;
